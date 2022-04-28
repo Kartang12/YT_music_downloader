@@ -1,0 +1,55 @@
+  private async void button1_Click(object sender, EventArgs e)
+         {
+             using (FolderBrowserDialog fbd1 = new FolderBrowserDialog() { Description = "Please select a folder where you wan to download the file" }) ;
+             {
+                 FolderBrowserDialog fbd1 = new FolderBrowserDialog();
+                 if (fbd1.ShowDialog()==DialogResult.OK)
+                 {
+                     MessageBox.Show("Download Started!");
+    
+                     var yt = YouTube.Default;
+                     var video = await yt.GetVideoAsync(textBox1.Text);
+                     File.WriteAllBytes(fbd1.SelectedPath + @"\" + video.FullName, await video.GetBytesAsync());
+                     var inputfile = new MediaToolkit.Model.MediaFile { Filename = fbd1.SelectedPath + @"\" + video.FullName };
+                     var outputfile = new MediaToolkit.Model.MediaFile { Filename = $"{fbd1.SelectedPath + @"\" + video.FullName }.mp3"  };
+    
+                     using (var enging = new Engine())
+                     {
+                         enging.GetMetadata(inputfile);
+                         enging.Convert(inputfile, outputfile);
+                     }
+                     if (format == true)
+                     {
+                         File.Delete(fbd1.SelectedPath + @"\" + video.FullName);
+                     }
+                     else
+                     {
+                         File.Delete($"{fbd1.SelectedPath + @"\" + video.FullName}.mp3");
+                     }
+                     progressBar1.Value = 100;
+                     MessageBox.Show("Download Completed!");
+                 }
+                 else
+                 {
+                     MessageBox.Show("Please select a folder");
+                 }
+             }
+    
+    
+                
+         }
+        
+    
+           
+         private void radioButton1_CheckedChanged(object sender, EventArgs e)
+         {
+             format = true;
+         }
+    
+    
+       
+    
+         private void mp4checked(object sender, EventArgs e)
+         {
+             format = false;
+         }
